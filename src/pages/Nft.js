@@ -21,7 +21,7 @@ function Nft() {
       <main className="nft-body">
         <div className="nft-form-area">
           <div className="nft-form">
-            <InputBox label="Object URL:" type="text" value={objectURL} onChange={setObjectURL} className="mt-2" error={errorObjectURL}/>
+            <InputBox label="Token URL:" type="text" value={objectURL} onChange={setObjectURL} className="mt-2" error={errorObjectURL}/>
             <div className="btn-row">
               <Button label="Mint" className="d-flex float-right" onClick={handleMint}/>
             </div>
