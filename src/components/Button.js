@@ -7,7 +7,7 @@ const Button = (props) => {
   return (
     <Wrapper className={className}>
       <button
-        className="form-sbmt footer-btn"
+        className="form-sbmt footer-btn text-ellipsis"
         type="submit"
         disabled={disabled}
         onClick={() => {
@@ -28,7 +28,6 @@ const Wrapper = styled.div`
     border: 1px solid black;
     width: 25.9rem;
     cursor: pointer;
-    margin-top: 3rem;
     padding-left: 2.5rem;
     padding-right: 2.5rem;
     height: 5rem;
@@ -103,5 +102,12 @@ const Wrapper = styled.div`
   
   .footer-btn:hover::before {
     opacity: 1;
+  }
+
+  .text-ellipsis {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;

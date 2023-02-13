@@ -1,31 +1,51 @@
 import React, { useState, useEffect, useMemo } from "react";
-import api from "../api";
 import InputBox from '../components/InputBox';
-import TextArea from '../components/TextArea';
 import styled from "styled-components";
 import Button from '../components/Button';
-import moment from 'moment'
+import { createPurchaseData, mint, SHARENFT_ADDRESS } from "../contracts/contract";
+import { useSigner } from "wagmi";
 
 function Nft() {
-  const [objectURL, setObjectURL] = useState(null);
-  const [errorObjectURL, setErrorObjectURL] = useState(null);
-  useEffect(() => {
+  const [objectURL, setObjectURL] = useState(null)
+  const [tokenId, setTokenId] = useState(0)
+  const [progress, setProgress] = useState(false)
+  const { data: signer } = useSigner()
+
+  const handleMint = async () => {
+    try {
+      setProgress(true)
+      const mintedTokenId = await mint(objectURL, signer)
+      setTokenId(mintedTokenId)
+
+      const purchaseData = await createPurchaseData(
+        signer,
+        SHARENFT_ADDRESS,
+        mintedTokenId,
+        100
+      )
+      
+      localStorage.setItem('purchaseData', JSON.stringify(purchaseData))
+    } finally {
+      setProgress(false)
+    }
     
-  }, []);
-
-  const handleMint = () => {
-
   }
+
   return (
     <Wrapper>
       <main className="nft-body">
         <div className="nft-form-area">
           <div className="nft-form">
-            <InputBox label="Token URL:" type="text" value={objectURL} onChange={setObjectURL} className="mt-2" error={errorObjectURL}/>
+            <InputBox label="Token URL:" type="text" value={objectURL} onChange={setObjectURL} className="mt-2"/>
             <div className="btn-row">
-              <Button label="Mint" className="d-flex float-right" onClick={handleMint}/>
+              <Button label="Mint" className="d-flex float-right" onClick={handleMint} disabled={progress}/>
             </div>
           </div>
+          {tokenId != 0 && (
+            <h5 className="nft-desc">
+              Minted ShareNFT #{tokenId}
+            </h5>
+          )}
         </div>
       </main>
     </Wrapper>
@@ -61,4 +81,8 @@ const Wrapper = styled.main`
     }
   }
   
+  .nft-desc {
+    color: grey;
+    font-size: 20px;
+  }
 `;

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
-import toast from "react-hot-toast";
-import api from "../api";
 import InputBox from '../components/InputBox';
-import TextArea from '../components/TextArea';
 import styled from "styled-components";
 import Button from '../components/Button';
 import { useNavigate } from "react-router-dom";
 import openCloseNav from "../helper/openclosenav";
+import { beforePurchase, convertUsdToEth, getEthLatestPrice, getRevenueInfo, purchase, setRevenuePercents } from "../contracts/contract";
+import { ethers } from "ethers";
+import { useAccount, useSigner } from "wagmi";
 
 function Payment() {
   const navigate = useNavigate();
@@ -16,80 +16,56 @@ function Payment() {
   const [ethVal, setEthVal] = useState(null);
   const [gas, setGas] = useState(null);
   const [total, setTotal] = useState(null);
-  const [description, setDescription] = useState(null);
-  const [objectUrl, setObjectUrl] = useState(null);
-
-  const [errorWalletAdr1, setErrorWalletAdr1] = useState(null);
-  const [errorWalletAdr2, setErrorWalletAdr2] = useState(null);
-  const [errorUsdVal, setErrorUsdVal] = useState(null);
-  const [errorEthVal, setErrorEthVal] = useState(null);
-  const [errorGas, setErrorGas] = useState(null);
-  const [errorDescription, setErrorDescription] = useState(null);
-  const [errorObjectUrl, setErrorObjectUrl] = useState(null);
+  const [purchaseData, setPurchaseData] = useState(null);
+  const { data: signer } = useSigner();
+  const { address: signerAddr } = useAccount();
+  const [purchasing, setPurchasing] = useState(false);
 
   useEffect(() => {
     scrollToTop();
     openCloseNavbar();
+
+    updateNftInfo();
   }, []);
 
-  const handleMint = (event) => {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
+  useEffect(() => {
+    beforePurchase(purchaseData, signer).then(({nftPrice, gasPrice, totalPrice}) => {
+      setEthVal(nftPrice);
+      setGas(gasPrice);
+      setTotal(totalPrice);
+    })
+  }, [purchaseData, signerAddr])
 
-    if (!walletAdr1) {
-      setErrorWalletAdr1("Please enter from name.");
-      return;
-    } else {
-      setErrorWalletAdr1(null);
-    }
+  const updateNftInfo = async () => {
+    const purchaseData = JSON.parse(localStorage.getItem('purchaseData'));
+    const revenues = await getRevenueInfo()
 
-    if (!usdVal) {
-      setErrorUsdVal("Please enter from email address.");
-      return;
-    } else {
-      setErrorUsdVal(null);
-    }
-    
-    if (!walletAdr2) {
-      setErrorWalletAdr2("Please enter to name.");
-      return;
-    } else {
-      setErrorWalletAdr2(null);
-    }
+    // purchaseData.tokenId = 3;
+    setPurchaseData(purchaseData);
 
-    if (!ethVal) {
-      setErrorEthVal("Please enter to email address.");
-      return;
-    } else {
-      setErrorEthVal(null);
-    }
-    
-    if (!gas) {
-      setErrorGas("Please enter gas.");
-      return;
-    } else {
-      setErrorGas(null);
-    }
+    revenues.length > 0 && setWalletAdr1(revenues[0].recipient);
+    revenues.length > 1 && setWalletAdr2(revenues[1].recipient);
 
-    if (!description) {
-      setErrorDescription("Please fill description.");
-      return;
-    } else {
-      setErrorDescription(null);
-    }
-
-  };
-
-  const handleConnect = () => {
-
+    setUsdVal(Number(purchaseData.priceInUsd));
   }
 
-  const handlePay = () => {
-
+  const handleSetRevenues1 = async () => {
+    await setRevenuePercents(walletAdr1, signer)
   }
 
+  const handleSetRevenues2 = async () => {
+    await setRevenuePercents(walletAdr2, signer)
+  }
+
+  const handlePurchase = async () => {
+    setPurchasing(true)
+    try {
+      await purchase(purchaseData, signer)
+    } finally {
+      setPurchasing(false)
+    }
+    
+  }
 
   const scrollToTop = () => {
     try {
@@ -115,19 +91,22 @@ function Payment() {
       <main className="payment-body">
         <div className="payment-form-area">
           <div className="payment-form">
-            <InputBox placeholder="Wallet Address 1:" label="Wallet Address 1:" type="text" value={walletAdr1} onChange={setWalletAdr1} className="mt-2" error={errorWalletAdr1}/>
-            <InputBox placeholder="Wallet Address 2:" label="Wallet Address 2:" type="text" value={walletAdr2} onChange={setWalletAdr2} className="mt-2" error={errorWalletAdr2}/>
-            <div className="btn-row">
-              <Button label="Connect Wallet" className="d-flex float-right" onClick={handleConnect}/>
+            <div className="row">
+              <InputBox placeholder="Wallet Address 1:" label="Wallet Address 1:" type="text" value={walletAdr1} onChange={setWalletAdr1} className="flex-1"/>
+              <Button label="Set Revenues" className="d-flex float-right mt-2" onClick={handleSetRevenues1}/>
+            </div>
+            <div className="row mt-2">
+              <InputBox placeholder="Wallet Address 2:" label="Wallet Address 2:" type="text" value={walletAdr2} onChange={setWalletAdr2} className="flex-1"/>
+              <Button label="Set Revenues" className="d-flex float-right" onClick={handleSetRevenues2}/>
             </div>
             <div className="pay-row">
-              <InputBox label="USD Value:" type="number" value={usdVal} onChange={setUsdVal} error={errorUsdVal}/>
-              <InputBox label="Eth:" type="number" value={ethVal} onChange={setEthVal} error={errorEthVal}/>
-              <InputBox label=" + Gas:" type="number" value={gas} onChange={setGas} error={errorGas}/>
-              <InputBox label=" = Total:" type="number" value={total} onChange={setTotal} error={errorGas}/>
+              <InputBox label="USD Value:" type="string" value={usdVal} disabled={true}/>
+              <InputBox label="Eth:" type="string" value={ethVal} disabled={true}/>
+              <InputBox label=" + Gas:" type="string" value={gas} disabled={true}/>
+              <InputBox label=" = Total:" type="string" value={total} disabled={true}/>
             </div>
             <div className="btn-row">
-              <Button label="Pay Wallet 2" className="d-flex float-right" onClick={handlePay}/>
+              <Button label={purchasing ? "Purchasing..." : "Purchase"} className="d-flex float-right mt-2" onClick={handlePurchase} disabled={purchasing}/>
             </div>
           </div>
         </div>
@@ -165,4 +144,8 @@ const Wrapper = styled.main`
     }
   }
   
+  .row {
+    display: flex;
+    flex-direction: row;
+  }
 `;

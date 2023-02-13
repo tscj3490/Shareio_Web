@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
+import {useAccount} from 'wagmi'
+import {useConnectModal} from '@rainbow-me/rainbowkit'
 import openCloseNav from "../helper/openclosenav";
 import logo from "../assets/images/logo.jfif";
 import styled from "styled-components";
+import Button from '../components/Button';
 
 const Navigation = (props) => {
+  const { address } = useAccount()
+  const { openConnectModal } = useConnectModal()
+
+  const handleConnect = () => {
+    if (!address && openConnectModal) {
+      openConnectModal()
+    }
+  }
 
   return (
     <Wrapper>
@@ -31,6 +42,9 @@ const Navigation = (props) => {
                   </li>
                   <li className="nav-item gren">
                     <a href="/nft">NFT</a>
+                  </li>
+                  <li className="nav-item gren">
+                    <Button label={address || "Connect Wallet"} className="d-flex float-right" disabled={!!address} onClick={handleConnect}/>
                   </li>
                 </ul>
               </nav>
