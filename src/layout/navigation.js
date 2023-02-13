@@ -44,6 +44,9 @@ const Navigation = (props) => {
                     <a href="/nft">NFT</a>
                   </li>
                   <li className="nav-item gren">
+                    <a href="/account">Account</a>
+                  </li>
+                  <li className="nav-item gren">
                     <Button label={address || "Connect Wallet"} className="d-flex float-right" disabled={!!address} onClick={handleConnect}/>
                   </li>
                 </ul>

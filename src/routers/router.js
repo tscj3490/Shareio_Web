@@ -3,6 +3,7 @@ import Payment from "../pages/Payment";
 import Thanks from "../pages/Thanks";
 import Nft from "../pages/Nft";
 import { createBrowserRouter } from "react-router-dom";
+import Account from '../pages/Account';
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path: "nft",
         element: <Nft />
+      },
+      {
+        path: "account",
+        element: <Account />
       },
     ]
   },

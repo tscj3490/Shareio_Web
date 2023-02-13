@@ -80,7 +80,6 @@ export const beforePurchase = async (purchaseData, buyer) => {
   let priceInEth = BigNumber.from(0)
   let gasPrice = BigNumber.from(0)
 
-  console.log('---', purchaseData)
   try {
     priceInEth = convertUsdToEth(purchaseData.priceInUsd, ethInUsd)
 
@@ -91,7 +90,7 @@ export const beforePurchase = async (purchaseData, buyer) => {
     // calc gas price of tx
     gasPrice = gasPricePerGas.mul(txGas)
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
   
 
@@ -132,4 +131,22 @@ export const getRevenueInfo = async () => {
 export const getEthLatestPrice = async () => {
   const ethInUsd = await SHARENFT_CONTRACT.getEthLatestPrice()
   return ethInUsd
+}
+
+export const getNftsOwnedBy = async (address) => {
+  const moralisKey = '6VzWfGLdVSf64P4IWJ80opyAHhkfk4MiPwRwNMmXDdZAtxE4rZfGIWBj6EEcQjvM'
+  const chain = 'goerli'
+  const format = 'decimal'
+  const tokenAddresses = [SHARENFT_ADDRESS]
+  const baseUri = 'https://deep-index.moralis.io/api/v2'
+
+  const apiUri = `${baseUri}/${address}/nft?chain=${chain}&format=${format}`
+  // const apiUri = `${baseUri}/${address}/nft?chain=${chain}&format=${format}&token_addresses%5B0%5D=${tokenAddresses[0]}`
+  return fetch(apiUri, {
+    headers: {
+      'X-API-Key': moralisKey,
+      'accept': 'application/json'
+    }
+  }).then(r => r.json())
+  .then(d => d.result)
 }
