@@ -140,8 +140,8 @@ export const getNftsOwnedBy = async (address) => {
   const tokenAddresses = [SHARENFT_ADDRESS]
   const baseUri = 'https://deep-index.moralis.io/api/v2'
 
-  const apiUri = `${baseUri}/${address}/nft?chain=${chain}&format=${format}`
-  // const apiUri = `${baseUri}/${address}/nft?chain=${chain}&format=${format}&token_addresses%5B0%5D=${tokenAddresses[0]}`
+  // const apiUri = `${baseUri}/${address}/nft?chain=${chain}&format=${format}`
+  const apiUri = `${baseUri}/${address}/nft?chain=${chain}&format=${format}&token_addresses%5B0%5D=${tokenAddresses[0]}`
   return fetch(apiUri, {
     headers: {
       'X-API-Key': moralisKey,
