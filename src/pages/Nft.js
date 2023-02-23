@@ -70,6 +70,7 @@ const Wrapper = styled.main`
           display: flex;
           flex-direction: row;
           justify-content: flex-end;
+          margin-top: 2rem;
         }
         .pay-row {
           display: flex;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {useAccount} from 'wagmi'
 import {useConnectModal} from '@rainbow-me/rainbowkit'
 import openCloseNav from "../helper/openclosenav";
-import logo from "../assets/images/logo.jfif";
+import logo from "../assets/images/logo.webp";
 import styled from "styled-components";
 import Button from '../components/Button';
 
@@ -44,7 +44,7 @@ const Navigation = (props) => {
                     <a href="/nft">NFT</a>
                   </li>
                   <li className="nav-item gren">
-                    <a href="/account">Account</a>
+                    <a href="/account">ACCOUNT</a>
                   </li>
                   <li className="nav-item gren">
                     <Button label={address || "Connect Wallet"} className="d-flex float-right" disabled={!!address} onClick={handleConnect}/>
@@ -107,7 +107,7 @@ const Wrapper = styled.main`
     position: relative;
     transition: all 0.3s;
     .nav-logo img {
-      width: 285px;
+      width: 225px;
       height: auto;
     }
     

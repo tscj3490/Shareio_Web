@@ -92,17 +92,17 @@ function Payment() {
         <div className="payment-form-area">
           <div className="payment-form">
             <div className="row">
-              <InputBox placeholder="Wallet Address 1:" label="Wallet Address 1:" type="text" value={walletAdr1} onChange={setWalletAdr1} className="flex-1"/>
-              <Button label="Set Revenues" className="d-flex float-right mt-2" onClick={handleSetRevenues1}/>
+              <InputBox placeholder="Wallet Address 1:" label="Wallet Address 1:" type="text" value={walletAdr1} onChange={setWalletAdr1} className="flex-1"/>&nbsp;&nbsp;&nbsp;
+              <Button label="Set Revenues" className="d-flex float-right" onClick={handleSetRevenues1}/>
             </div>
             <div className="row mt-2">
-              <InputBox placeholder="Wallet Address 2:" label="Wallet Address 2:" type="text" value={walletAdr2} onChange={setWalletAdr2} className="flex-1"/>
+              <InputBox placeholder="Wallet Address 2:" label="Wallet Address 2:" type="text" value={walletAdr2} onChange={setWalletAdr2} className="flex-1"/>&nbsp;&nbsp;&nbsp;
               <Button label="Set Revenues" className="d-flex float-right" onClick={handleSetRevenues2}/>
             </div>
             <div className="pay-row">
-              <InputBox label="USD Value:" type="string" value={usdVal} disabled={true}/>
-              <InputBox label="Eth:" type="string" value={ethVal} disabled={true}/>
-              <InputBox label=" + Gas:" type="string" value={gas} disabled={true}/>
+              <InputBox label="USD Value:" type="string" value={usdVal} disabled={true}/>&nbsp;&nbsp;&nbsp;
+              <InputBox label="Eth:" type="string" value={ethVal} disabled={true}/>&nbsp;&nbsp;&nbsp;
+              <InputBox label=" + Gas:" type="string" value={gas} disabled={true}/>&nbsp;&nbsp;&nbsp;
               <InputBox label=" = Total:" type="string" value={total} disabled={true}/>
             </div>
             <div className="btn-row">
@@ -128,6 +128,7 @@ const Wrapper = styled.main`
       padding: 0 15px;
       .payment-form {
         margin: auto;
+        
         .btn-row {
           width: 100%;
           display: flex;
